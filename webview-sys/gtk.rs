@@ -35,12 +35,12 @@ struct WebView {
 }
 
 #[no_mangle]
-unsafe extern fn webview_set_title(webview:*mut WebView, title:*const c_char) {
+unsafe extern "C" fn webview_set_title(webview:*mut WebView, title:*const c_char) {
 	gtk_window_set_title(mem::transmute((*webview).window), title);
 }
 
 #[no_mangle]
-unsafe extern fn webview_set_fullscreen(webview:*mut WebView, fullscreen:c_int) {
+unsafe extern "C" fn webview_set_fullscreen(webview:*mut WebView, fullscreen:c_int) {
 	if fullscreen > 0 {
 		gtk_window_fullscreen(mem::transmute((*webview).window));
 	} else {
@@ -49,7 +49,7 @@ unsafe extern fn webview_set_fullscreen(webview:*mut WebView, fullscreen:c_int) 
 }
 
 #[no_mangle]
-unsafe extern fn webview_new(
+unsafe extern "C" fn webview_new(
 	title:*const c_char,
 	url:*const c_char,
 	width:c_int,
@@ -199,7 +199,7 @@ extern fn webview_context_menu_cb(
 	GTRUE
 }
 
-unsafe extern fn external_message_received_cb(
+unsafe extern "C" fn external_message_received_cb(
 	_m:*mut WebKitUserContentManager,
 	r:*mut WebKitJavascriptResult,
 	arg:gpointer,
@@ -223,19 +223,19 @@ unsafe extern fn external_message_received_cb(
 }
 
 #[no_mangle]
-unsafe extern fn webview_get_user_data(webview:*mut WebView) -> *mut c_void { (*webview).userdata }
+unsafe extern "C" fn webview_get_user_data(webview:*mut WebView) -> *mut c_void { (*webview).userdata }
 
 #[no_mangle]
-unsafe extern fn webview_free(webview:*mut WebView) { let _ = Box::from_raw(webview); }
+unsafe extern "C" fn webview_free(webview:*mut WebView) { let _ = Box::from_raw(webview); }
 
 #[no_mangle]
-unsafe extern fn webview_loop(webview:*mut WebView, blocking:c_int) -> c_int {
+unsafe extern "C" fn webview_loop(webview:*mut WebView, blocking:c_int) -> c_int {
 	gtk_main_iteration_do(blocking);
 	(*webview).should_exit
 }
 
 #[no_mangle]
-unsafe extern fn webview_set_color(webview:*mut WebView, r:u8, g:u8, b:u8, a:u8) {
+unsafe extern "C" fn webview_set_color(webview:*mut WebView, r:u8, g:u8, b:u8, a:u8) {
 	let color = GdkRGBA {
 		red:r as c_double / 255.0,
 		green:g as c_double / 255.0,
@@ -246,7 +246,7 @@ unsafe extern fn webview_set_color(webview:*mut WebView, r:u8, g:u8, b:u8, a:u8)
 	webkit_web_view_set_background_color(mem::transmute((*webview).webview), &color);
 }
 
-unsafe extern fn webview_load_changed_cb(
+unsafe extern "C" fn webview_load_changed_cb(
 	_webview:*mut WebKitWebView,
 	event:WebKitLoadEvent,
 	arg:gpointer,
@@ -258,7 +258,7 @@ unsafe extern fn webview_load_changed_cb(
 	}
 }
 
-unsafe extern fn webview_eval_finished(
+unsafe extern "C" fn webview_eval_finished(
 	_object:*mut GObject,
 	_result:*mut GAsyncResult,
 	userdata:gpointer,
@@ -268,7 +268,7 @@ unsafe extern fn webview_eval_finished(
 }
 
 #[no_mangle]
-unsafe extern fn webview_eval(webview:*mut WebView, js:*const c_char) -> c_int {
+unsafe extern "C" fn webview_eval(webview:*mut WebView, js:*const c_char) -> c_int {
 	while (*webview).ready == 0 {
 		g_main_context_iteration(ptr::null_mut(), GTRUE);
 	}
@@ -299,7 +299,7 @@ struct DispatchArg {
 	arg:*mut c_void,
 }
 
-unsafe extern fn webview_dispatch_wrapper(userdata:gpointer) -> gboolean {
+unsafe extern "C" fn webview_dispatch_wrapper(userdata:gpointer) -> gboolean {
 	let webview:*mut WebView = mem::transmute(userdata);
 
 	loop {
@@ -318,7 +318,7 @@ unsafe extern fn webview_dispatch_wrapper(userdata:gpointer) -> gboolean {
 }
 
 #[no_mangle]
-unsafe extern fn webview_dispatch(webview:*mut WebView, func:DispatchFn, arg:*mut c_void) {
+unsafe extern "C" fn webview_dispatch(webview:*mut WebView, func:DispatchFn, arg:*mut c_void) {
 	let arg = Box::new(DispatchArg { func, webview, arg });
 
 	let queue = (*webview).queue;
@@ -335,15 +335,15 @@ unsafe extern fn webview_dispatch(webview:*mut WebView, func:DispatchFn, arg:*mu
 }
 
 #[no_mangle]
-unsafe extern fn webview_destroy_cb(_widget:*mut GtkWidget, arg:gpointer) {
+unsafe extern "C" fn webview_destroy_cb(_widget:*mut GtkWidget, arg:gpointer) {
 	webview_exit(mem::transmute(arg));
 }
 
 #[no_mangle]
-unsafe extern fn webview_exit(webview:*mut WebView) { (*webview).should_exit = 1; }
+unsafe extern "C" fn webview_exit(webview:*mut WebView) { (*webview).should_exit = 1; }
 
 #[no_mangle]
-unsafe extern fn webview_print_log(s:*const c_char) {
+unsafe extern "C" fn webview_print_log(s:*const c_char) {
 	let format = std::ffi::CString::new("%s\n").unwrap();
 
 	libc::printf(format.as_ptr(), s);
