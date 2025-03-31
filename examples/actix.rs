@@ -19,7 +19,7 @@ use web_view::*;
 #[folder = "examples/actix"]
 struct Asset;
 
-fn assets(req:HttpRequest) -> HttpResponse {
+fn assets(req: HttpRequest) -> HttpResponse {
 	let path = if req.path() == "/" {
 		// if there is no path, return default file
 		"index.html"
@@ -31,7 +31,7 @@ fn assets(req:HttpRequest) -> HttpResponse {
 	// query the file from embedded asset with specified path
 	match Asset::get(path) {
 		Some(content) => {
-			let body:Body = match content {
+			let body: Body = match content {
 				Cow::Borrowed(bytes) => bytes.into(),
 				Cow::Owned(bytes) => bytes.into(),
 			};

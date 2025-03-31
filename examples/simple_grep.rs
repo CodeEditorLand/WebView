@@ -41,11 +41,7 @@ fn main() {
 					};
 
 					if result.is_empty() {
-						tfd::message_box_ok(
-							"Information",
-							"No results were found!",
-							MessageBoxIcon::Info,
-						);
+						tfd::message_box_ok("Information", "No results were found!", MessageBoxIcon::Info);
 					} else {
 						let eval_str = format!("LoadTextArea({:?});", result);
 
@@ -53,21 +49,15 @@ fn main() {
 					}
 				},
 
-				Browse {} => {
-					match tfd::open_file_dialog("Please choose a file...", "", None) {
-						Some(path_selected) => {
-							let eval_str = format!("SetPath({:?});", path_selected);
+				Browse {} => match tfd::open_file_dialog("Please choose a file...", "", None) {
+					Some(path_selected) => {
+						let eval_str = format!("SetPath({:?});", path_selected);
 
-							webview.eval(&eval_str)?;
-						},
-						None => {
-							tfd::message_box_ok(
-								"Warning",
-								"You didn't choose a file.",
-								MessageBoxIcon::Warning,
-							);
-						},
-					}
+						webview.eval(&eval_str)?;
+					},
+					None => {
+						tfd::message_box_ok("Warning", "You didn't choose a file.", MessageBoxIcon::Warning);
+					},
 				},
 
 				Error { msg } => tfd::message_box_ok("Error", &msg, MessageBoxIcon::Error),
@@ -82,15 +72,15 @@ fn main() {
 #[derive(Deserialize)]
 #[serde(tag = "cmd", rename_all = "camelCase")]
 pub enum Cmd {
-	Search { pattern:String, path:String },
+	Search { pattern: String, path: String },
 	Browse {},
-	Error { msg:String },
+	Error { msg: String },
 }
 
-fn search(pattern:&str, path:OsString) -> Result<OsString, Box<dyn Error>> {
+fn search(pattern: &str, path: OsString) -> Result<OsString, Box<dyn Error>> {
 	let matcher = RegexMatcher::new_line_matcher(&pattern)?;
 
-	let mut matches:OsString = OsString::new();
+	let mut matches: OsString = OsString::new();
 
 	let mut searcher = SearcherBuilder::new()
 		.binary_detection(BinaryDetection::quit(b'\x00'))
@@ -119,12 +109,8 @@ fn search(pattern:&str, path:OsString) -> Result<OsString, Box<dyn Error>> {
 			&matcher,
 			entry.path(),
 			UTF8(|lnum, line| {
-				matched_line = OsString::from(format!(
-					"{:?}\t {}:\t {}",
-					entry.path(),
-					lnum.to_string(),
-					line.to_string()
-				));
+				matched_line =
+					OsString::from(format!("{:?}\t {}:\t {}", entry.path(), lnum.to_string(), line.to_string()));
 
 				matches.push(&matched_line);
 
@@ -147,7 +133,7 @@ fn search(pattern:&str, path:OsString) -> Result<OsString, Box<dyn Error>> {
 	Ok(matches)
 }
 
-const HTML:&str = r#"
+const HTML: &str = r#"
 <!doctype html>
 <html>
 	<head>

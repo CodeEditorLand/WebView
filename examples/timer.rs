@@ -69,7 +69,7 @@ fn main() {
 	webview.run().unwrap();
 }
 
-fn render(webview:&mut WebView<i32>, counter:u32) -> WVResult {
+fn render(webview: &mut WebView<i32>, counter: u32) -> WVResult {
 	let user_data = *webview.user_data();
 
 	println!("counter: {}, userdata: {}", counter, user_data);
@@ -77,7 +77,7 @@ fn render(webview:&mut WebView<i32>, counter:u32) -> WVResult {
 	webview.eval(&format!("updateTicks({}, {})", counter, user_data))
 }
 
-const HTML:&str = r#"
+const HTML: &str = r#"
 <!doctype html>
 <html>
 	<body>

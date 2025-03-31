@@ -6,7 +6,7 @@ use std::{
 
 pub trait CustomError: Display + Debug + Send + Sync + 'static {}
 
-impl<T:Display + Debug + Send + Sync + 'static> CustomError for T {}
+impl<T: Display + Debug + Send + Sync + 'static> CustomError for T {}
 
 /// A WebView error.
 #[derive(Debug)]
@@ -33,7 +33,9 @@ pub enum Error {
 impl Error {
 	/// Creates a custom error from a `T: Display + Debug + Send + Sync +
 	/// 'static`.
-	pub fn custom<E:CustomError>(error:E) -> Error { Error::Custom(Box::new(error)) }
+	pub fn custom<E: CustomError>(error: E) -> Error {
+		Error::Custom(Box::new(error))
+	}
 }
 
 impl error::Error for Error {
@@ -46,7 +48,7 @@ impl error::Error for Error {
 }
 
 impl Display for Error {
-	fn fmt(&self, f:&mut fmt::Formatter) -> fmt::Result {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
 		match self {
 			Error::UninitializedField(field) => {
 				write!(f, "Required field uninitialized: {}.", field)
@@ -67,5 +69,7 @@ impl Display for Error {
 pub type WVResult<T = ()> = Result<T, Error>;
 
 impl From<NulError> for Error {
-	fn from(e:NulError) -> Error { Error::NulByte(e) }
+	fn from(e: NulError) -> Error {
+		Error::NulByte(e)
+	}
 }
