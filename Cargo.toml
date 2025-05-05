@@ -1,45 +1,32 @@
-[dependencies]
-boxfnonce = { version = "0.1" }
-tinyfiledialogs = { version = "3.9.1" }
-urlencoding = { version = "2.1" }
-webview-sys = { path = "webview-sys", version = "0.5" }
+[package]
+name = "web-view"
+version = "0.6.2"
+authors = ["Boscop", "zxey <r.hozak@seznam.cz>", "Sam Green <sam.green81@gmail.com>"]
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/Boscop/web-view"
+description = "Rust bindings for webview, a tiny cross-platform library to render web-based GUIs for desktop applications"
+keywords = ["web", "gui", "desktop", "electron", "webkit"]
+categories = ["gui", "web-programming", "api-bindings", "rendering", "visualization"]
+exclude = ["examples/todo-ps/dist/**/*", "examples/elm-counter/index.html"]
 
-[dev-dependencies]
-actix-rt = "2.10"
-actix-web = "4.9"
-futures = { version = "0.3" }
-grep = { version = "0.3.2" }
-mime_guess = { version = "2.0.5" }
-rust-embed = "8.5.0"
-serde = { version = "1.0" }
-serde_derive = { version = "1.0" }
-serde_json = { version = "1.0" }
-walkdir = { version = "2.5.0" }
+[dependencies]
+urlencoding = "1.0"
+webview-sys = { path = "webview-sys", version = "0.5" }
+boxfnonce = "0.1"
+tinyfiledialogs = "3.3.9"
 
 [features]
 edge = ["webview-sys/edge"]
 
-[lib]
-path = "Source/lib.rs"
-
-[package]
-authors = [
-	"Boscop",
-	"zxey <r.hozak@seznam.cz>",
-	"Sam Green <sam.green81@gmail.com>",
-]
-categories = [
-	"gui",
-	"web-programming",
-	"api-bindings",
-	"rendering",
-	"visualization",
-]
-description = "Rust bindings for webview, a tiny cross-platform library to render web-based GUIs for desktop applications"
-exclude = ["examples/todo-ps/dist/**/*", "examples/elm-counter/index.html"]
-keywords = ["web", "gui", "desktop", "electron", "webkit"]
-license-file = "LICENSE"
-name = "web-view"
-readme = "README.md"
-repository = "https://github.com/Boscop/web-view"
-version = "0.6.2"
+[dev-dependencies]
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+actix-web = "1.0"
+actix-rt = "0.2"
+rust-embed = "5.1.0"
+mime_guess = "2.0.1"
+futures = "0.1"
+grep = "0.2.4"
+walkdir = "2.3.1"
